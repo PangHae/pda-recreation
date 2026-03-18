@@ -7,7 +7,17 @@ import Button from '@/components/ui/Button'
 
 type Props = { questions: Question[] }
 
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr]
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]]
+  }
+  return a
+}
+
 export default function FlagQuiz({ questions }: Props) {
+  const [deck, setDeck] = useState<Question[]>(() => shuffle(questions))
   const [index, setIndex] = useState(0)
   const [revealed, setRevealed] = useState(false)
 
@@ -20,13 +30,20 @@ export default function FlagQuiz({ questions }: Props) {
     )
   }
 
-  const q = questions[index]
-  const isLast = index >= questions.length - 1
-  function next() { setIndex(i => Math.min(i + 1, questions.length - 1)); setRevealed(false) }
+  const q = deck[index]
+  function next() {
+    if (index >= deck.length - 1) {
+      setDeck(shuffle(questions))
+      setIndex(0)
+    } else {
+      setIndex(i => i + 1)
+    }
+    setRevealed(false)
+  }
 
   return (
     <div className="flex flex-col items-center justify-center gap-8 w-full">
-      <p className="text-light-blue text-xl">{index + 1} / {questions.length}</p>
+      <p className="text-light-blue text-xl">{index + 1} / {deck.length}</p>
 
       {/* Flag image */}
       {q.image_url ? (
@@ -50,8 +67,8 @@ export default function FlagQuiz({ questions }: Props) {
         {!revealed && (
           <Button variant="ghost" size="lg" onClick={() => setRevealed(true)}>정답 공개</Button>
         )}
-        <Button size="lg" onClick={next} disabled={isLast}>다음</Button>
-        <Button variant="secondary" size="lg" onClick={next} disabled={isLast}>패스</Button>
+        <Button size="lg" onClick={next}>다음</Button>
+        <Button variant="secondary" size="lg" onClick={next}>패스</Button>
       </div>
     </div>
   )
