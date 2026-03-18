@@ -21,6 +21,15 @@ export async function addScoreAction({ teamId, gameName, points, note }: AddScor
   return { success: true }
 }
 
+export async function resetScoresAction() {
+  const supabase = createServerClient()
+  const { error: logsError } = await supabase.from('score_logs').delete().neq('id', 0)
+  if (logsError) return { error: logsError.message }
+  const { error: teamsError } = await supabase.from('teams').update({ total_score: 0 }).neq('id', 0)
+  if (teamsError) return { error: teamsError.message }
+  return { success: true }
+}
+
 export async function getTeamsAction() {
   const supabase = createServerClient()
   const { data, error } = await supabase

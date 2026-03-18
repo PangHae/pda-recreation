@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { createServerClient } from '@/lib/supabase/server'
 import ScoreInputForm from '@/components/admin/ScoreInputForm'
+import ResetScoresButton from '@/components/admin/ResetScoresButton'
 import Link from 'next/link'
 
 export default async function DashboardPage() {
@@ -19,6 +20,9 @@ export default async function DashboardPage() {
         </div>
         <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4">
           <ScoreInputForm initialTeams={teams ?? []} />
+        </div>
+        <div className="mt-4">
+          <ResetScoresButton />
         </div>
       </div>
     </div>
